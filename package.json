@@ -1,0 +1,13 @@
+{
+  "name": "monosodium-backend",
+  "version": "0.0.1",
+  "description": "Monosodium Backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "facebook-chat-api": "^1.6.1",
+    "mongoose": "^5.6.9"
+  }
+}
