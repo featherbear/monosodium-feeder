@@ -3,30 +3,55 @@
 let login = require('facebook-chat-api')
 let EventEmitter = require('events')
 
-async function spawnClient (creds) {
-  let client = new class extends EventEmitter {
-    constructor () {
-      super()
-      this.api = null
+class FeederClient extends EventEmitter {
+  constructor (credentials) {
+    super()
+    this.api = null
+    this.username = null
+    this.password = null
+
+    if (credentials) { 
+      this.setCredentials(credentials)
+    }
+  }
+
+  setCredentials ({ username, password }) {
+    this.username = username
+    this.password = password
+    return this
+  }
+
+  get id () {
+    if (this.api === null) throw Error('Bot not logged in')
+    return Number(this.api.getCurrentUserID())
+  }
+
+  async login (credentials) {
+    if (credentials) {
+      this.setCredentials(credentials)
     }
 
-    get id () {
-      if (this.api === null) throw Error('Bot not logged in')
-      return Number(this.api.getCurrentUserID())
-    }
-
-    async login (credentials) {
-      return new Promise((resolve, reject) => {
-        login(credentials, (err, api) => {
+    return new Promise((resolve, reject) => {
+      login( {
+         username: this.username,
+         password: this.password 
+        },
+        (err, api) => {
           if (err) reject(err)
           this.api = api
           resolve(this)
-        })
-      })
-    }
-  }()
+        }
+      )
+    })
+  }
+}
 
-  await client.login(creds)
+
+
+async function spawnClient (credentials) {
+  let client = new FeederClient()
+
+  await client.login(credentials)
 
   client.api.setOptions({
     logLevel: 'warn',
