@@ -7,6 +7,7 @@ if (!facebookUsername) throw new Error('Facebook username not supplied!')
 if (!facebookPassword) throw new Error('Facebook password not supplied!')
 
 const spawnClient = require('./spawnClient')
+const mongoose = require('mongoose')
 
 async function go () {
   try {
@@ -39,6 +40,7 @@ async function go () {
       password: facebookPassword
     }
 
+    const { Message, Thread } = require('./models')
     let bot = spawnClient(credentials).then(bot => {
       bot.on('data', function (data) {
         switch (data.type) {
