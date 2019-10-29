@@ -12,6 +12,7 @@ class FeederClient extends EventEmitter {
     this.api = null
     this.username = null
     this.password = null
+    this.clientID = null
 
     if (credentials) {
       this.setCredentials(credentials)
@@ -44,6 +45,7 @@ class FeederClient extends EventEmitter {
         (err, api) => {
           if (err) reject(err)
           this.api = api
+          this.clientID = api.getCurrentUserID()
           resolve(this)
         }
       )
