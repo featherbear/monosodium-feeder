@@ -39,10 +39,28 @@ async function go () {
       password: facebookPassword
     }
 
-    let bot = spawnClient(credentials).then(bot =>
-      bot.on('event', function (data) {
-        new Message(data).save()
+    let bot = spawnClient(credentials).then(bot => {
+      bot.on('data', function (data) {
+        switch (data.type) {
+          case 'message':
+          case 'event':
+          case 'message_unsend':
+          case 'message_reply':
+          case 'message_reaction':
+            console.log(data)
+            return
+
+          case 'read_receipt':
+          case 'read':
+          case 'typ':
+          case 'presence':
+            return
+
+          default:
+            console.log('Expected event type: ' + data.type)
+        }
       })
+    })
     )
   } catch (err) {
     console.log(err)

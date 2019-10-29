@@ -12,18 +12,10 @@ module.exports = async function spawnClient (credentials) {
     forceLogin: true
   })
 
-  client.api.listen((err, message) => {
+  client.api.listen((err, evt) => {
     if (err) return console.error(err)
 
-    console.log(message)
-
-    client.emit('event', {
-      body: message.body,
-      sender: Number(message.senderID),
-      thread: Number(message.threadID),
-      timestamp: Number(message.timestamp),
-      account: client.id
-    })
+    client.emit('data', evt)
   })
 
   return client
