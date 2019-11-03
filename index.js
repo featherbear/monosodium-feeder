@@ -11,29 +11,17 @@ const mongoose = require('mongoose')
 
 async function go () {
   try {
-    var mongoose = require('mongoose')
-
     console.log('Connecting to MongoDB')
     await mongoose.connect(
       mongoConnection,
       function (err) {
         if (err) {
-          throw new Error("Could not connect to MongoDB")
+          throw new Error('Could not connect to MongoDB')
         }
 
         console.log('Connected to MongoDB')
       }
     )
-
-    var MessageSchema = new mongoose.Schema({
-      body: String,
-      timestamp: Number,
-      sender: Number,
-      thread: Number,
-      account: Number
-    })
-
-    var Message = mongoose.model('Message', MessageSchema)
 
     let credentials = {
       username: facebookUsername,
@@ -41,12 +29,43 @@ async function go () {
     }
 
     const { Message, Thread } = require('./models')
+
     let bot = spawnClient(credentials).then(bot => {
       bot.on('data', function (data) {
+        //   this.findOne({id: data.threadID}, (err, result) => {
+        //     return result
+        //       ? callback(err, result)
+        //       : self.create(condition, (err, result) => {
+        //         return callback(err, result)
+        //       })
+        //   })
+        // }
+
         switch (data.type) {
           case 'message':
-          case 'event':
+            console.log(data)
+
+            Message.create({
+              body: data.body,
+              timestamp: data.timestamp,
+              sender: data.senderID,
+              id: data.messageID
+              // thread: ThreadSchema,
+            })
+            return
           case 'message_unsend':
+            Message.findOne({ id: data.messageID }, (err, msg) => {
+              if (err) {
+                console.error(err)
+                return
+              }
+
+              msg.markAsDeleted()
+            })
+            return
+
+          case 'event':
+
           case 'message_reply':
           case 'message_reaction':
             console.log(data)
@@ -63,7 +82,6 @@ async function go () {
         }
       })
     })
-    )
   } catch (err) {
     console.log(err)
     throw err

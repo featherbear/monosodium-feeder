@@ -2,6 +2,7 @@
 
 // https://github.com/Schmavery/facebook-chat-api
 // https://github.com/ChatPlug/libfb-js
+
 let login = require('facebook-chat-api')
 
 let EventEmitter = require('events')
