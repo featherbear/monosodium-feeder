@@ -10,7 +10,7 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "facebook-chat-api": "github:Schmavery/facebook-chat-api",
-    "mongoose": "^5.6.9",
+    "mongoose": "^5.7.5",
     "monosodium-commons": "github:featherbear/monosodium-commons",
     "nodemon": "^1.19.4"
   }
