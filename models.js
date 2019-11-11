@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 
-const schemas = require('./schemas')
+const { Schemas } = require('../monosodium-commons')
 
 module.exports = {
-  Message: mongoose.model('messages', schemas.MessageSchema),
-  Thread: mongoose.model('threads', schemas.ThreadSchema)
+  Message: mongoose.model('messages', Schemas.MessageSchema),
+  Thread: mongoose.model('threads', Schemas.ThreadSchema)
 }

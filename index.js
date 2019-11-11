@@ -31,26 +31,35 @@ async function go () {
     const { Message, Thread } = require('./models')
 
     let bot = spawnClient(credentials).then(bot => {
-      bot.on('data', function (data) {
-        //   this.findOne({id: data.threadID}, (err, result) => {
-        //     return result
-        //       ? callback(err, result)
-        //       : self.create(condition, (err, result) => {
-        //         return callback(err, result)
-        //       })
-        //   })
-        // }
+      let cache = {}
+
+      bot.on('data', async function (data) {
+        let threadID = data.threadID
+        let threadObj
+
+        if (!(threadID in cache)) {
+          threadObj = await Thread.findOne({ id: threadID })
+          if (!threadObj) {
+            threadObj = await Thread.create({ id: threadID })
+            bot.api.getThreadInfo(threadID, function (err, response) {
+              // response.threadName || response.name
+              // response.participantsIDs
+            })
+          }
+
+          cache[threadID] = threadObj
+        } else {
+          threadObj = cache[threadID]
+        }
 
         switch (data.type) {
           case 'message':
-            console.log(data)
-
             Message.create({
               body: data.body,
               timestamp: data.timestamp,
               sender: data.senderID,
-              id: data.messageID
-              // thread: ThreadSchema,
+              id: data.messageID,
+              thread: threadObj._id
             })
             return
           case 'message_unsend':
@@ -64,11 +73,28 @@ async function go () {
             })
             return
 
-          case 'event':
-
           case 'message_reply':
+            let refMessage = await Message.findOne({ id: data.messageReply.messageID })
+            let refID = null;
+            if (refMessage) {
+              refID = refMessage._id
+            }
+
+            Message.create({
+              body: data.body,
+              timestamp: data.timestamp,
+              sender: data.senderID,
+              id: data.messageID,
+              thread: threadObj._id,
+              reply: refID
+            })
+            return
+
+          case 'event':
+            // console.log(data);
+            return;
+
           case 'message_reaction':
-            console.log(data)
             return
 
           case 'read_receipt':
@@ -78,7 +104,7 @@ async function go () {
             return
 
           default:
-            console.log('Expected event type: ' + data.type)
+            console.log('Unexpected event type: ' + data.type)
         }
       })
     })
