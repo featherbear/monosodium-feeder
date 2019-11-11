@@ -1,15 +1,17 @@
 {
-  "name": "monosodium-backend",
+  "name": "monosodium-feeder",
   "version": "0.0.1",
-  "description": "Monosodium Backend",
+  "description": "Monosodium Backend Feeder",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js"
+    "start": "nodemon ./index.js",
+    "update": "npm install featherbear/monosodium-commons"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
     "facebook-chat-api": "github:Schmavery/facebook-chat-api",
     "mongoose": "^5.6.9",
+    "monosodium-commons": "github:featherbear/monosodium-commons",
     "nodemon": "^1.19.4"
   }
 }
