@@ -6,7 +6,7 @@ if (!mongoConnection) throw new Error('MongoDB connection URI not supplied!')
 if (!facebookUsername) throw new Error('Facebook username not supplied!')
 if (!facebookPassword) throw new Error('Facebook password not supplied!')
 
-const spawnClient = require('./spawnClient')
+const spawnClient = require('./lib/spawnClient')
 const mongoose = require('mongoose')
 
 async function go () {
