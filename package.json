@@ -1,7 +1,7 @@
 {
-  "name": "monosodium-feeder",
+  "name": "monosodium-service",
   "version": "0.0.1",
-  "description": "Monosodium Backend Feeder",
+  "description": "Monosodium Service",
   "main": "index.js",
   "scripts": {
     "start": "node ./index.js",
