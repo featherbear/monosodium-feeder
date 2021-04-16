@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./index.js",
-    "dev": "nodemon ./index.js"
+    "dev": "nodemon ./index.js",
+    "transpile": "sucrase ./src -d ./build --transforms typescript,imports"
   },
   "license": "MIT",
   "dependencies": {
@@ -14,5 +15,9 @@
     "mongoose": "^5.12.3",
     "monosodium-commons": "github:featherbear/monosodium-commons",
     "nodemon": "^2.0.7"
+  },
+  "devDependencies": {
+    "@types/mongoose": "^5.10.4",
+    "sucrase": "^3.18.1"
   }
 }
