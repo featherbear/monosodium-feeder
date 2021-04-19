@@ -4,8 +4,8 @@
   "description": "Monosodium Service",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index.js",
-    "dev": "nodemon ./index.js",
+    "start": "node ./build/index.js",
+    "dev": "nodemon ./src/index.ts",
     "transpile": "sucrase ./src -d ./build --transforms typescript,imports"
   },
   "license": "MIT",
