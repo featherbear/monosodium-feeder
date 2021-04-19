@@ -1,19 +1,32 @@
 require('dotenv').config()
 
-const {
-  MONGO_ADDRESS,
-  MONGO_USE_AUTH,
-  MONGO_USERNAME,
-  MONGO_PASSWORD
-} = process.env
-
-if (!MONGO_CONNECTION) throw new Error('MongoDB connection URI not supplied!')
-
-import mongoose from 'mongoose'
 import MSGCommons from 'monosodium-commons'
 let {
   Models: { Message, Thread }
 } = MSGCommons
+
+import {
+  generateKeyPair,
+  setPrivateKey,
+  serialisePublicKey,
+  serialisePrivateKey,
+  deserialisePrivateKey,
+  derivePublicKeyFromPrivateKey
+} from 'monosodium-commons/lib/ACrypt'
+let { PRIVATE_KEY } = process.env
+if (!PRIVATE_KEY) {
+  console.warn('PRIVATE_KEY not set, generating random key')
+  const { publicKey, privateKey } = generateKeyPair()
+  setPrivateKey(privateKey)
+  console.info('Set PRIVATE_KEY to:', serialisePrivateKey(privateKey))
+  console.info('Set PUBLIC_KEY to:', serialisePublicKey(publicKey))
+} else {
+  let privateKey = deserialisePrivateKey(PRIVATE_KEY)
+  setPrivateKey(privateKey)
+  if (false) {
+    console.debug(serialisePublicKey(derivePublicKeyFromPrivateKey(privateKey)))
+  }
+}
 
 // async function handleMessage (data) {
 //   switch (data.type) {
@@ -77,29 +90,10 @@ let {
 async function go () {
   //   // TODO: Auth?
   //   // TODO: Connect to MongoDB
-
   // TODO: MONGODB VS MONGOOSE
-  const authPrepend = MONGO_USE_AUTH
-    ? `${encodeURIComponent(MONGO_USERNAME)}:${encodeURIComponent(
-        MONGO_PASSWORD
-      )}@`
-    : ''
-  const client = new MongoClient(`mongodb://${authPrepend}${MONGO_ADDRESS}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-
-  await mongoose.connect(mongoConnection, function (err) {
-    if (err) {
-      throw new Error('Could not connect to MongoDB')
-    }
-    console.log('Connected to MongoDB')
-  })
-
   //   // TODO: Check users
   //   // Launch users, get the user session
   // let userData = []
-
   //   for (let user of userData) {
   //     // onMessage store into the MongoDB
   //     //    check if multipart (text, image, video)
