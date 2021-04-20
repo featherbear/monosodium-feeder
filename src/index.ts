@@ -1,30 +1,22 @@
 require('dotenv').config()
 
-import MSGCommons from 'monosodium-commons'
-let {
-  Models: { Message, Thread }
-} = MSGCommons
+import { Mongo } from 'monosodium-commons'
 
 import {
-  generateKeyPair,
-  setPrivateKey,
-  serialisePublicKey,
-  serialisePrivateKey,
-  deserialisePrivateKey,
-  derivePublicKeyFromPrivateKey
-} from 'monosodium-commons/lib/ACrypt'
+  ACrypt
+} from 'monosodium-commons'
 let { PRIVATE_KEY } = process.env
 if (!PRIVATE_KEY) {
   console.warn('PRIVATE_KEY not set, generating random key')
-  const { publicKey, privateKey } = generateKeyPair()
-  setPrivateKey(privateKey)
-  console.info('Set PRIVATE_KEY to:', serialisePrivateKey(privateKey))
-  console.info('Set PUBLIC_KEY to:', serialisePublicKey(publicKey))
+  const { publicKey, privateKey } = ACrypt.generateKeyPair()
+  ACrypt.setPrivateKey(privateKey)
+  console.info('Set PRIVATE_KEY to:', ACrypt.serialisePrivateKey(privateKey))
+  console.info('Set PUBLIC_KEY to:', ACrypt.serialisePublicKey(publicKey))
 } else {
-  let privateKey = deserialisePrivateKey(PRIVATE_KEY)
-  setPrivateKey(privateKey)
+  let privateKey = ACrypt.deserialisePrivateKey(PRIVATE_KEY)
+  ACrypt.setPrivateKey(privateKey)
   if (false) {
-    console.debug(serialisePublicKey(derivePublicKeyFromPrivateKey(privateKey)))
+    console.debug(ACrypt.serialisePublicKey(ACrypt.derivePublicKeyFromPrivateKey(privateKey)))
   }
 }
 
@@ -87,10 +79,28 @@ if (!PRIVATE_KEY) {
 //   }
 // }
 
-async function go () {
-  //   // TODO: Auth?
-  //   // TODO: Connect to MongoDB
-  // TODO: MONGODB VS MONGOOSE
+import type { ChangeEvent, ChangeEventUpdate, ChangeEventTypes } from 'mongodb'
+async function go() {
+  await Mongo.doConnect()
+  Mongo.Models.User.watch(
+    [{
+      $match: { operationType: 'update' }
+    }]
+  ).on('change', (_data) => {
+    const data = _data as ChangeEventUpdate
+    let { documentKey, updateDescription: { updatedFields } } = data
+    console.log(documentKey, updatedFields);
+
+    if ((updatedFields?.["FB_AUTH.session"])?.buffer[0] == 0x3A /* ':' */) {
+      // Handle connect requests
+      const [username, password] = ACrypt.decryptData(updatedFields["FB_AUTH.session"].buffer.slice(1))
+        .toString()
+        .split(":")
+        .map(d => Buffer.from(d, 'base64').toString())
+      console.log('Auth request', username, password)
+      // TODO: Spawn ID check client, clear session / set session
+    }
+  })
   //   // TODO: Check users
   //   // Launch users, get the user session
   // let userData = []
