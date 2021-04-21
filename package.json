@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "dotenv": "^8.2.0",
-    "facebook-messenger-puppeteer": "https://github.com/featherbear/facebook-messenger-puppeteer.git#v1.1.1",
+    "facebook-messenger-puppeteer": "featherbear/facebook-messenger-puppeteer#e801dc",
     "mongoose": "^5.12.3",
     "monosodium-commons": "github:featherbear/monosodium-commons",
     "nodemon": "^2.0.7"
