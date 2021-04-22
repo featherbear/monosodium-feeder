@@ -397,9 +397,9 @@ extract-zip@^2.0.0:
   optionalDependencies:
     "@types/yauzl" "^2.9.1"
 
-facebook-messenger-puppeteer@featherbear/facebook-messenger-puppeteer#e801dc:
-  version "1.1.4"
-  resolved "https://codeload.github.com/featherbear/facebook-messenger-puppeteer/tar.gz/e801dce516cb808997b1134961c91bb3af083358"
+facebook-messenger-puppeteer@featherbear/facebook-messenger-puppeteer#v1.2.0:
+  version "1.2.0"
+  resolved "https://codeload.github.com/featherbear/facebook-messenger-puppeteer/tar.gz/6f5d840725e38779da0cef4c501e95ecb88ed677"
   dependencies:
     atob "^2.1.2"
     puppeteer "^5.2.1"
