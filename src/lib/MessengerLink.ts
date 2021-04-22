@@ -13,13 +13,11 @@
 
 
 import FBClient from 'facebook-messenger-puppeteer'
-import { EventEmitter } from 'events'
 
-export default class MessengerLink extends EventEmitter {
+export default class MessengerLink {
   api: FBClient
 
   constructor() {
-    super()
     this.api = null
   }
 
@@ -38,6 +36,7 @@ export default class MessengerLink extends EventEmitter {
 
       let client = new FBClient({
         selfListen: true,
+        debug: true,
         session: auth?.session
       })
 
@@ -49,5 +48,9 @@ export default class MessengerLink extends EventEmitter {
 
   async close() {
     await this.api.close()
+  }
+
+  listen(callback: Function) {
+    return this.api.listen(callback)
   }
 }
