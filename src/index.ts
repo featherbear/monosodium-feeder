@@ -121,10 +121,10 @@ async function go() {
     return (await Mongo.Models.UserThread.create({ user: MSGUserId, threads: [] }))._id
   }
 
-  async function getThreadId(UserThreadId: Types.ObjectId, tid: Number) {
+  async function getThreadId(UserThreadId: Types.ObjectId, tid: Number, dontCreate: boolean = false) {
     let id;
     id = (await Mongo.Models.Thread.findOne({ utid: UserThreadId, tid }, {}))?._id
-    if (id) return id
+    if (id || dontCreate /* null */) return id
     id = (await Mongo.Models.Thread.create({ utid: UserThreadId, tid, members: [], messages: [], name: 'TODO:' }))._id
     await Mongo.Models.UserThread.findByIdAndUpdate(UserThreadId, { $push: { threads: id } })
     return id;
@@ -164,9 +164,8 @@ async function go() {
           break;
 
         case 'message_unsend':
-          Mongo.Models.Message.findOneAndUpdate({ thread: threadId, mid: data.messageId }, { deleted: true })
-
-
+          let mongoThreadId = threadIdCache[data.thread] || (threadIdCache[data.thread] = await getThreadId(userThreadId, data.thread, true));
+          await Mongo.Models.Message.findOneAndUpdate({ thread: mongoThreadId, mid: data.messageId }, { deleted: data.timestamp })
       }
 
       //     case 'message_reply':
